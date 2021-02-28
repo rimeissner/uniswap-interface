@@ -1,7 +1,6 @@
 import { ChainId } from '@uniswap/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
-import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk/dist/src/sdk'
-import { SafeInfo } from '@gnosis.pm/safe-apps-sdk'
+import SafeAppsSDK, { SafeInfo } from '@gnosis.pm/safe-apps-sdk'
 
 const NETWORK_CHAIN_ID: Record<string, number> = {
   'MAINNET': ChainId.MAINNET,
@@ -89,10 +88,21 @@ class SafeAppProvider implements AsyncSendable {
         return this.sdk.eth.getBlockByHash([params[0], params[1]]);
 
       case 'eth_getTransactionByHash':
-        return this.sdk.eth.getTransactionByHash([params[0]]);
+        let txHash = params[0]
+        try {
+          const resp = await this.sdk.txs.getBySafeTxHash(txHash)
+          txHash = resp.transactionHash || txHash
+        } catch (e) {}
+        return this.sdk.eth.getTransactionByHash([txHash])
 
-      case 'eth_getTransactionReceipt':
-        return this.sdk.eth.getTransactionReceipt([params[0]]);
+      case 'eth_getTransactionReceipt': {
+        let txHash = params[0]
+        try {
+          const resp = await this.sdk.txs.getBySafeTxHash(txHash)
+          txHash = resp.transactionHash || txHash
+        } catch (e) {}
+        return this.sdk.eth.getTransactionReceipt([txHash])
+      }
 
       case 'eth_estimateGas': {
         return 0;
