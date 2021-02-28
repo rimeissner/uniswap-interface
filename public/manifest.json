@@ -18,6 +18,8 @@
   ],
   "orientation": "portrait",
   "name": "Uniswap",
+  "description": "Uniswap",
+  "iconPath": "./images/512x512_App_Icon.png",
   "short_name": "Uniswap",
   "start_url": ".",
   "theme_color": "#ff007a"
